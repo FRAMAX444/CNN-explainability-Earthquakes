@@ -2,3 +2,6 @@ h5py
 numpy
 matplotlib
 scipy
+librosa
+pandas
+tqdm
