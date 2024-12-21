@@ -5,3 +5,7 @@ scipy
 librosa
 pandas
 tqdm
+opencv-python
+torch
+shap
+torchvision
