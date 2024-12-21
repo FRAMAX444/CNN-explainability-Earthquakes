@@ -1,8 +1,7 @@
 import h5py
 import numpy as np
 import pandas as pd
-from scipy.signal import spectrogram
-import librosa
+import scipy
 
 FS = 100
 NPERSEG = 64
@@ -14,7 +13,7 @@ def compute_spectrograms(waveforms, fs=FS, nperseg=NPERSEG, noverlap=NOVERLAP):
     """
     specs = []
     for i in range(3):
-        f, t, Sxx = spectrogram(waveforms[i], fs=fs, nperseg=nperseg, noverlap=noverlap)
+        f, t, Sxx = scipy.signal.spectrogram(waveforms[i], fs=fs, nperseg=nperseg, noverlap=noverlap)
         specs.append(Sxx)
     specs = np.stack(specs, axis=0)  # (3, F, T)
     return specs
@@ -25,61 +24,68 @@ def compute_log_spectrograms(waveforms, fs=FS, nperseg=NPERSEG, noverlap=NOVERLA
     """
     specs = []
     for i in range(3):
-        f, t, Sxx = spectrogram(waveforms[i], fs=fs, nperseg=nperseg, noverlap=noverlap)
+        f, t, Sxx = scipy.signal.spectrogram(waveforms[i], fs=fs, nperseg=nperseg, noverlap=noverlap)
         specs.append(Sxx)
     specs = np.stack(specs, axis=0)  # (3, F, T)
     log_specs = np.log1p(specs)
     return log_specs
 
-def extract_features(waveforms, fs=FS):
-    """
-    Extract additional features to help classify pre- vs post-events.
+import numpy as np
+import scipy.signal
+import scipy.stats
 
-    Features:
-    - Max and RMS amplitude per channel
-    - Spectral centroid and bandwidth (mean over time)
-    - Zero-crossing rate (mean)
-    - Energy ratio in a specific frequency band (e.g., 5–10 Hz)
+def extract_waveform_features(waveform):
+    """
+    Extract features from a 3-channel seismic waveform.
+    Input: waveform array of shape (3, samples)
+    Returns: dictionary of features with descriptive names.
     """
     features = {}
-
-    # Basic amplitude features
+    
     for i in range(3):
-        ch_data = waveforms[i]
-        features[f'max_amp_ch{i}'] = np.max(np.abs(ch_data))
-        features[f'rms_amp_ch{i}'] = np.sqrt(np.mean(ch_data**2))
-
-    # Advanced spectral and temporal features using librosa
-    # For each channel, compute spectral centroid, bandwidth, and zero-crossing rate
-    for i in range(3):
-        ch_data = waveforms[i]
-
-        # Spectral centroid & bandwidth
-        centroid = librosa.feature.spectral_centroid(y=ch_data, sr=fs)
-        bandwidth = librosa.feature.spectral_bandwidth(y=ch_data, sr=fs)
-        # Take mean over time frames
-        features[f'spectral_centroid_ch{i}'] = np.mean(centroid)
-        features[f'spectral_bandwidth_ch{i}'] = np.mean(bandwidth)
-
-        # Zero-crossing rate
-        zcr = librosa.feature.zero_crossing_rate(y=ch_data)
-        features[f'zcr_ch{i}'] = np.mean(zcr)
-
-        # Energy ratio in a band (e.g., 5–10 Hz)
-        # Compute FFT
-        fft_vals = np.fft.rfft(ch_data)
-        freqs = np.fft.rfftfreq(len(ch_data), 1/fs)
+        channel = waveform[i]
+        channel_id = f"c{i}"  # Channel identifier (e.g., c1, c2, c3)
         
-        # Total energy
-        total_energy = np.sum(np.abs(fft_vals)**2)
+        # Basic statistics
+        features[f"f1_{channel_id}_maximum_amplitude"] = np.max(channel)
+        features[f"f2_{channel_id}_minimum_amplitude"] = np.min(channel)
+        features[f"f3_{channel_id}_mean_amplitude"] = np.mean(channel)
+        features[f"f4_{channel_id}_std_dev_amplitude"] = np.std(channel)
+        features[f"f5_{channel_id}_median_amplitude"] = np.median(channel)
+        features[f"f6_{channel_id}_signal_range"] = np.ptp(channel)  # Range
         
-        # Frequency band energy: 5–10 Hz
-        band_mask = (freqs >= 5) & (freqs <= 10)
-        band_energy = np.sum(np.abs(fft_vals[band_mask])**2)
+        # Energy features
+        features[f"f7_{channel_id}_total_energy"] = np.sum(channel**2)
+        features[f"f8_{channel_id}_root_mean_square"] = np.sqrt(np.mean(channel**2))
+        features[f"f9_{channel_id}_absolute_mean_amplitude"] = np.mean(np.abs(channel))
         
-        # Ratio of band energy to total energy
-        band_ratio = band_energy / (total_energy + 1e-12)  # Avoid division by zero
-        features[f'band_5_10_energy_ratio_ch{i}'] = band_ratio
-
+        # Spectral features
+        freqs, psd = scipy.signal.welch(channel)  # Power spectral density
+        features[f"f10_{channel_id}_peak_spectral_power"] = np.max(psd)
+        features[f"f11_{channel_id}_dominant_frequency"] = freqs[np.argmax(psd)]
+        features[f"f12_{channel_id}_mean_spectral_power"] = np.mean(psd)
+        features[f"f13_{channel_id}_spectral_entropy"] = scipy.stats.entropy(psd / np.sum(psd))
+        features[f"f14_{channel_id}_spectral_flatness"] = np.exp(np.mean(np.log(psd))) / np.mean(psd)
+        
+        # Zero crossings and peaks
+        zero_crosses = np.where(np.diff(np.signbit(channel)))[0]
+        features[f"f15_{channel_id}_num_zero_crossings"] = len(zero_crosses)
+        peaks = len(scipy.signal.find_peaks(channel)[0])
+        features[f"f16_{channel_id}_num_peaks"] = peaks
+        
+        # Higher-order statistics
+        features[f"f17_{channel_id}_kurtosis"] = scipy.stats.kurtosis(channel)
+        features[f"f18_{channel_id}_skewness"] = scipy.stats.skew(channel)
+        features[f"f19_{channel_id}_variance"] = np.var(channel)
+        features[f"f20_{channel_id}_iqr"] = np.percentile(channel, 75) - np.percentile(channel, 25)
+        
+        # Shape-based features
+        rise_time = np.argmax(channel) if np.argmax(channel) > 0 else 0
+        fall_time = len(channel) - np.argmax(channel) if np.argmax(channel) < len(channel) else 0
+        features[f"f21_{channel_id}_rise_time"] = rise_time
+        features[f"f22_{channel_id}_fall_time"] = fall_time
+        features[f"f23_{channel_id}_peak_to_peak_amplitude"] = np.max(channel) - np.min(channel)
+        
+    
     return features
 
