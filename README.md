@@ -1,0 +1,1 @@
+![background](img_path)
