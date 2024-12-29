@@ -1,4 +1,4 @@
-![background](media\BG.png)
+![background](media/BG.png)
 
 ## Overview  
 This project explores the application of explainability techniques in deep learning models trained on seismic data. Inspired by the work of Laurenti et al., we focus on understanding what machine learning models learn when classifying foreshocks and aftershocks or predicting earthquake magnitude. Using SHAP (SHapley Additive exPlanations), we analyze the importance of input features derived from seismic waveforms, converted into spectrograms or feature vectors.  
@@ -54,7 +54,7 @@ Work in progres...
    - [***What is Machine Learning Teaching Us?** Ecplainable AI for Seismic Models*](#) (link to be added)  
 
 2. **Project Presentation**  
-   - [*Results Presentation*](media\Presentation.pdf)
+   - [*Results Presentation*](media/Presentation.pdf) (not completed)
 
 3. **Laurenti, Paolini et al. (Nature 2024)**  
    - [***Probing the Evolution of Fault Properties During the Seismic Cycle with Deep Learning***](https://www.nature.com/articles/s41467-024-54153-w)
