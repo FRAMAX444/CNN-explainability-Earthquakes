@@ -28,19 +28,22 @@ This project explores the application of explainability techniques in deep learn
 
 ## How to Use  
 
-1. **Clone the repository**  
+1. **Download the Dataset**
+   We used the same dataset from Laurenti et al. article (only selecting pre and post waveforms), you can find it [here](https://zenodo.org/records/12795621).
+
+3. **Clone the repository**  
    ```bash  
    git clone https://github.com/FRAMAX444/CNN-explainability-Earthquakes
    cd your_path/CNN-explainability-Earthquakes  
    ```
 
-3. **Create and activate Virtual Environment**
+4. **Create and activate Virtual Environment**
     ```bash  
     python3 -m venv venv
     source venv/bin/activate
    ```
 
-2. **Install dependecies**
+5. **Install dependecies**
     ```bash 
     pip install -r requirements.txt  
     ```
