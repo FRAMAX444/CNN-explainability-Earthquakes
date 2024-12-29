@@ -55,7 +55,7 @@ Work in progres...
 ## References  
 
 1. **Our Report**  
-   - [***What is Machine Learning Teaching Us?** Ecplainable AI for Seismic Models*](#) (link to be added)  
+   - [***What is Machine Learning Teaching Us?** Explainable AI for Seismic Models*](#) (link to be added)  
 
 2. **Project Presentation**  
    - [*Results Presentation*](media/Presentation.pdf) (not completed)
