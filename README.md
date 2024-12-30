@@ -58,7 +58,7 @@ Work in progres...
    - [***What is Machine Learning Teaching Us?** Explainable AI for Seismic Models*](#) (link to be added)  
 
 2. **Project Presentation**  
-   - [*Results Presentation*](media/Presentation.pdf) (not completed)
+   - [*Results Presentation*](media/Presentation.pdf)
 
 3. **Laurenti, Paolini et al. (Nature 2024)**  
    - [***Probing the Evolution of Fault Properties During the Seismic Cycle with Deep Learning***](https://www.nature.com/articles/s41467-024-54153-w)
