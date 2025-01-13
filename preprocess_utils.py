@@ -16,7 +16,7 @@ def compute_spectrograms(waveforms, fs=FS, nperseg=NPERSEG, noverlap=NOVERLAP):
         f, t, Sxx = scipy.signal.spectrogram(waveforms[i], fs=fs, nperseg=nperseg, noverlap=noverlap)
         specs.append(Sxx)
     specs = np.stack(specs, axis=0)  # (3, F, T)
-    return specs
+    return specs, f, t
 
 def compute_log_spectrograms(waveforms, fs=FS, nperseg=NPERSEG, noverlap=NOVERLAP):
     """
@@ -28,7 +28,7 @@ def compute_log_spectrograms(waveforms, fs=FS, nperseg=NPERSEG, noverlap=NOVERLA
         specs.append(Sxx)
     specs = np.stack(specs, axis=0)  # (3, F, T)
     log_specs = np.log1p(specs)
-    return log_specs
+    return log_specs, f, t
 
 import numpy as np
 import scipy.signal
