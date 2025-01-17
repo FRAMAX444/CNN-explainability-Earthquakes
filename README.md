@@ -49,8 +49,41 @@ This project explores the application of explainability techniques in deep learn
     pip install -r requirements.txt  
     ```
 
-## Observations & Acknowledgments
-Work in progres...
+---
+
+## Results
+
+### 1. **Seismic Event Classification**
+- **Model**: A CNN trained on spectrograms derived from seismic waveforms.
+- **Datasets**: 
+  - NRCA dataset (station-specific, 5862 samples): Accuracy = **99.57%**.
+  - Full dataset (multi-station, 55,617 samples): Accuracy = **95.75%**.
+  - NRCA model applied to the full dataset: Accuracy = **50.19%** (poor generalization).
+- **SHAP Insights**:
+  - Foreshocks: Significant features in the 10–25 Hz range shortly after P-wave arrivals.
+  - Aftershocks: Features more evenly distributed over time, with lower frequency contributions.
+
+### 2. **Earthquake Magnitude Prediction**
+- **Model**: Random Forest Regressor with 100 trees.
+- **Performance**:
+  - R² = **0.8834**
+  - MAE = **0.1052**, RMSE = **0.1457**
+- **SHAP Insights**:
+  - Key features: Mean spectral power, P-wave travel times, and peak counts.
+  - Spectral and temporal characteristics strongly influenced predictions.
+
+---
+
+## Observations
+- **Generalization Challenges**:
+  - CNNs trained on single stations achieve high accuracy locally but fail to generalize to diverse datasets.
+  - Dataset diversity is crucial for robust seismic models.
+- **Model Transparency**:
+  - SHAP analysis provided critical insights into feature importance, bridging the gap between ML predictions and seismic domain knowledge.
+- **Future Directions**:
+  - Explore domain adaptation, metadata integration, and real-time monitoring applications.
+
+---
 
 ## References  
 
