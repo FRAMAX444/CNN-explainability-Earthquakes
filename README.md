@@ -88,7 +88,7 @@ This project explores the application of explainability techniques in deep learn
 ## References  
 
 1. **Our Report**  
-   - [***What is Machine Learning Teaching Us?** Explainable AI for Seismic Models*](#) (link to be added)  
+   - [***What is Machine Learning Teaching Us?** Explainable AI for Seismic Models*](media/MagriniMarroccoExplainableAI) 
 
 2. **Project Presentation**  
    - [*Results Presentation*](media/Presentation.pdf)
