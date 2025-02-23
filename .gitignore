@@ -3,3 +3,4 @@ __pycache__
 dataset
 images_for_presentation.ipynb
 trained_models/RF
+.env
